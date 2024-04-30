@@ -2,8 +2,8 @@ const express = require('express');
 const tourController = require('./../controllers/tourController');
 // Middleware for Router
 const tourRouter = express.Router();
-// Param middleware
-tourRouter.param('id', tourController.checkId);
+// Param middleware; do not need anymore
+// tourRouter.param('id', tourController.checkId);
 
 // Check body middleware;
 
