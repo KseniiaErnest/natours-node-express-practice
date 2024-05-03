@@ -10,7 +10,7 @@ const DB = process.env.DATABASE.replace(
 );
 
 mongoose.connect(DB).then((con) => {
-  console.log(con.connection);
+  // console.log(con.connection);
   console.log('DB connection successfull!');
 });
 
