@@ -98,7 +98,7 @@ tourSchema.pre('save', function (next) {
 
 // Query middleware
 tourSchema.pre(/^find/, function (next) {
-  this.find({ secretTour: { ne: true } });
+  this.find({ secretTour: { $ne: true } });
 
   this.start = Date.now();
   next();

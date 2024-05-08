@@ -5,7 +5,7 @@ this.queryString = queryString;
   }
 
 filter() {
-  const queryObj = {...this.filter.queryString} 
+  const queryObj = {...this.queryString} 
   const excludedFields = ['page', 'sort', 'limit', 'fields'];
   excludedFields.forEach(el => delete queryObj[el]);
 
