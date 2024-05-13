@@ -8,6 +8,7 @@ const userRouter = express.Router();
 
 // USER Routes
 userRouter.post('/signup', authController.signup);
+userRouter.post('/login', authController.login);
 
 userRouter.route('/').get(userController.getAllUsers).post(userController.createUser);
 userRouter
