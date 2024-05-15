@@ -15,7 +15,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm
+    passwordConfirm: req.body.passwordConfirm,
   });
 
   const token = signToken(newUser._id)
@@ -87,3 +87,15 @@ if (currentUser.changedPasswordAfter(decoded.iat)){
 req.user = currentUser;
   next();
 });
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    // roles ['admin, 'lead-guide']. Role = 'user
+
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('You do not have permission tp perfom this action', 403))
+    } 
+
+    next();
+  }
+}
