@@ -1,6 +1,6 @@
 const express = require('express');
 const userController = require('./../controllers/userController');
-const authController = require('./../controllers/authController')
+const authController = require('./../controllers/authController');
 
 // Middleware for Router
 const userRouter = express.Router();
@@ -24,6 +24,7 @@ userRouter
   .get(userController.getUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
+
 
 
   module.exports = userRouter;
