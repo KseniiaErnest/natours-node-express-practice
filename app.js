@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
@@ -13,7 +14,14 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 // Global Middleware
+
+// Serving static files
+// app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
 // Set security HTTP headers
 app.use(helmet());
 
@@ -46,9 +54,6 @@ app.use(hpp({
   ]
 }));
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
-
 // app.use((req, res, next) => {
 //   console.log('Hello from Middleware!');
 //   next();
@@ -60,6 +65,14 @@ app.use((req, res, next) => {
   next();
 });
 
+
+// 3) Routes
+app.get('/', (req, res) => {
+  res.status(200).render('base', {
+    tour: 'The Forest Hiker',
+    user: 'Kseniia'
+  });
+})
   // We use the middleware for Router
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);

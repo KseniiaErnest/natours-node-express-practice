@@ -22,7 +22,8 @@ userRouter.get('/me', userController.getMe, userController.getUser);
 userRouter.patch('/updateMe', userController.updateMe);
 userRouter.delete('/deleteMe', userController.deleteMe);
 
-
+// Only admins have access to below routes + protected
+userRouter.use(authController.restrictTo('admin'))
 userRouter.route('/').get(userController.getAllUsers).post(userController.createUser);
 userRouter
   .route('/:id')
