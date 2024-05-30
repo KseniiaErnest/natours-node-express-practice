@@ -157,7 +157,10 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 tourSchema.pre(/^find/, function(next) {
-  this.populate('guides');
+  this.populate({
+    path: 'guides',
+    // select: '-__v - passwordChaangedAt'
+  });
   
   next();
 });
