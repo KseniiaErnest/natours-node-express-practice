@@ -24,8 +24,38 @@ app.set('views', path.join(__dirname, 'views'));
 // app.use(express.static(`${__dirname}/public`));
 app.use(express.static(path.join(__dirname, 'public')));
 // Set security HTTP headers
-app.use(helmet());
+// app.use(helmet()); ///////////////////////////////////////////////////
+// Set security HTTP headers https://github.com/helmetjs/helmet
+app.use(
+  helmet({ crossOriginResourcePolicy: false, crossOriginEmbedderPolicy: false })
+);
 
+// Further HELMET configuration for Security Policy (CSP)
+const scriptSrcUrls = ['https://unpkg.com/', 'https://tile.openstreetmap.org'];
+const styleSrcUrls = [
+  'https://unpkg.com/',
+  'https://tile.openstreetmap.org',
+  'https://fonts.googleapis.com/',
+];
+const connectSrcUrls = ['https://unpkg.com', 'https://tile.openstreetmap.org'];
+const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com', 'data:'];
+ 
+//set security http headers
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [],
+      connectSrc: ["'self'", ...connectSrcUrls],
+      scriptSrc: ["'self'", ...scriptSrcUrls],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+      workerSrc: ["'self'", 'blob:'],
+      objectSrc: [],
+      imgSrc: ["'self'", 'blob:', 'data:', 'https:'],
+      fontSrc: ["'self'", ...fontSrcUrls],
+    },
+  })
+);
+////////////////////////////////////////////////////////////////
 // Dev logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));

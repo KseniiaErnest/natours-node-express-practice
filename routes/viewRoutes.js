@@ -14,4 +14,6 @@ viewRouter.get('/', viewController.getOverview);
 
 viewRouter.get('/tour/:slug', viewController.getTour);
 
+viewRouter.get('/login', viewController.getLoginForm);
+
 module.exports = viewRouter;
