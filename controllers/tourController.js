@@ -77,13 +77,11 @@ exports.getAllTours = factory.getAll(Tour);
 //   });
 // });
 
-exports.getTour = factory.getOne(Tour, {path: 'reviews'});
-
+exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 
 // POST request
 // exports.createTour = catchAsync(async (req, res, next) => {
 //   const newTour = await Tour.create(req.body);
-
 
 //     res.status(201).json({
 //       status: 'success',
@@ -139,19 +137,19 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
     },
     {
       $group: {
-        _id: {$toUpper: '$difficulty'},
-        numTours: { $sum: 1},
-        numOfRatings: { $sum: '$ratingsQuantity'},
+        _id: { $toUpper: '$difficulty' },
+        numTours: { $sum: 1 },
+        numOfRatings: { $sum: '$ratingsQuantity' },
         avgRating: { $avg: '$ratingsAverage' },
         avgPrice: { $avg: '$price' },
-        minPrice: { $min: '$price'},
+        minPrice: { $min: '$price' },
         maxPrice: { $max: '$price' },
       },
     },
     {
       $sort: {
-        avgPrice: 1
-      }
+        avgPrice: 1,
+      },
     },
     // {
     //   $match: { _id: { $ne: 'EASY' } }
@@ -161,9 +159,9 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: {
-      stats
-    }
-  })
+      stats,
+    },
+  });
 });
 
 exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
@@ -171,47 +169,78 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
 
   const plan = await Tour.aggregate([
     {
-      $unwind: '$startDates'
+      $unwind: '$startDates',
     },
     {
       $match: {
         startDates: {
-          $gte: new Date(`${year}-01-01`), 
+          $gte: new Date(`${year}-01-01`),
           $lte: new Date(`${year}-12-31`),
-        }
-      }
+        },
+      },
     },
     {
       $group: {
         _id: { $month: '$startDates' },
         numTourStarts: { $sum: 1 },
-        tours: { $push: '$name' }
-      }
+        tours: { $push: '$name' },
+      },
     },
     {
       $addFields: {
-        month: '$_id'
-      }
+        month: '$_id',
+      },
     },
     {
       $project: {
-        _id: 0
-      }
+        _id: 0,
+      },
     },
     {
       $sort: {
-        numTourStarts: -1
-       }
+        numTourStarts: -1,
+      },
     },
     {
-      $limit: 12
-    }
+      $limit: 12,
+    },
   ]);
-  
+
   res.status(200).json({
     status: 'success',
     data: {
-      plan
-    }
+      plan,
+    },
   });
 });
+
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+
+  const radius = unit === 'ml' ? distance / 3963.2 : distance / 6378.1;
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'Please provide latitude and longitude in the format lat, lng',
+        400
+      )
+    );
+  }
+
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      data: tours,
+    },
+  });
+});
+
+// '/tours-within/:distance/center/:latlng/unit/:unit'
+// 34.132459, -118.131324
