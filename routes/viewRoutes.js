@@ -1,5 +1,6 @@
 const express = require('express');
-const viewController = require('../controllers/viewController')
+const viewController = require('../controllers/viewController');
+const authController = require('../controllers/authController');
 
 const viewRouter = express.Router();
 
@@ -12,7 +13,7 @@ const viewRouter = express.Router();
 
 viewRouter.get('/', viewController.getOverview);
 
-viewRouter.get('/tour/:slug', viewController.getTour);
+viewRouter.get('/tour/:slug', authController.protect, viewController.getTour);
 
 viewRouter.get('/login', viewController.getLoginForm);
 
