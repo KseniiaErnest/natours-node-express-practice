@@ -10,11 +10,10 @@ const viewRouter = express.Router();
 //     user: 'Kseniia'
 //   });
 // });
-
+// Global middleware the applies to all routes
+viewRouter.use(authController.isLoggedIn);
 viewRouter.get('/', viewController.getOverview);
-
-viewRouter.get('/tour/:slug', authController.protect, viewController.getTour);
-
+viewRouter.get('/tour/:slug', viewController.getTour);
 viewRouter.get('/login', viewController.getLoginForm);
 
 module.exports = viewRouter;

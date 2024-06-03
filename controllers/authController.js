@@ -190,3 +190,29 @@ await user.save();
   // 4) Log user in, send JWT
   createAndSendToken(user, 200, res);
 });
+
+
+// Only for rendered pages, no errors
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+if (req.cookies.jwt) {
+  // Verify the token
+  const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+
+ // If verification is successful, check if user still exists
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+  return next();
+  }
+
+  //  If user changed password after the token was issued
+if (currentUser.changedPasswordAfter(decoded.iat)){
+  return next();
+};
+
+// There is a logged in user
+res.locals.user = currentUser;
+ return next();
+  }
+
+  next();
+});
