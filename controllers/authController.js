@@ -82,6 +82,7 @@ let token;
   if (!token) {
     console.log('No token found'); // Log if token is missing
     return next(new AppError('You are not logged in! Please log in to get access.', 401));
+    // return res.redirect('/');
   }
 // 2) Verification token
 const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -193,8 +194,9 @@ await user.save();
 
 
 // Only for rendered pages, no errors
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
 if (req.cookies.jwt) {
+  try {
   // Verify the token
   const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
 
@@ -212,7 +214,23 @@ if (currentUser.changedPasswordAfter(decoded.iat)){
 // There is a logged in user
 res.locals.user = currentUser;
  return next();
+  } catch(err) {
+    return next();
   }
-
+} 
   next();
-});
+};
+
+// exports.logout = (req, res) => {
+//   res.cookie('jwt', 'loggedout', {
+//     expires: new Date(Date.now() + 10 * 1000),
+//     httpOnly: true
+//   });
+
+//   res.status(200).json({success: 'success'});
+// }
+
+exports.logout = (req, res) => {
+  res.clearCookie('jwt');
+  res.status(200).json({ status: 'success' });
+};
