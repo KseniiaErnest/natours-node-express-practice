@@ -100,6 +100,7 @@ if (currentUser.changedPasswordAfter(decoded.iat)){
 
 // GRAND ACCESS TO PROTECTED ROUTE
 req.user = currentUser;
+res.locals.user = currentUser;
   next();
 });
 

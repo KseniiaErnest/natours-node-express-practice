@@ -11,9 +11,12 @@ const viewRouter = express.Router();
 //   });
 // });
 // Global middleware the applies to all routes
-viewRouter.use(authController.isLoggedIn);
-viewRouter.get('/', viewController.getOverview);
-viewRouter.get('/tour/:slug', viewController.getTour);
-viewRouter.get('/login', viewController.getLoginForm);
+// viewRouter.use(authController.isLoggedIn);
+viewRouter.get('/', authController.isLoggedIn, viewController.getOverview);
+viewRouter.get('/tour/:slug', authController.isLoggedIn, viewController.getTour);
+viewRouter.get('/login', authController.isLoggedIn, viewController.getLoginForm);
+viewRouter.get('/me', authController.protect, viewController.getAccount);
+
+viewRouter.post('/submit-user-data', authController.protect, viewController.updateUserData);
 
 module.exports = viewRouter;
