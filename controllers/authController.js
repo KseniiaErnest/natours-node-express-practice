@@ -141,6 +141,8 @@ try {
   //   subject: 'Your password reset token. Valid for 10 minutes',
   //   message
   // });
+
+  await new Email(user, resetURL).sendPasswordReset();
   
   res.status(200).json({
     status: 'success',

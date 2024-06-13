@@ -15,7 +15,13 @@ this.from = `Kseniia Ernest <${process.env.EMAIL_FROM}>`;
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
       // Sendgrid
-      return 1;
+      return nodemailer.createTransport({
+        service: 'SendGrid',
+        auth: {
+          user: process.env.SENGRID_USERNAME,
+          pass: process.env.SENGRID_PASSWORD
+        }
+      });
     }
 
     return nodemailer.createTransport({
@@ -52,6 +58,10 @@ this.from = `Kseniia Ernest <${process.env.EMAIL_FROM}>`;
 
  async sendWelcome() {
    await this.send('welcome', 'Welcome to the Natours Familty!')
+  }
+
+  async sendPasswordReset() {
+    await this.send('passwordReset', 'Your password reset token (valid only for 10 minutes)')
   }
 };
 
