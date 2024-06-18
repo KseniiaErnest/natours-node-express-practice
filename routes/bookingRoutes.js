@@ -5,6 +5,12 @@ const authController = require('./../controllers/authController');
 // Middleware for Router
 const bookingRouter = express.Router();
 
-bookingRouter.get('/checkout-session/:tourID', authController.protect, bookingController.getCheckoutSession)
+bookingRouter.use(authController.protect);
+
+bookingRouter.get('/checkout-session/:tourID', authController.protect, bookingController.getCheckoutSession);
+
+bookingRouter.use(authController.restrictTo('admin', 'lead-guide'));
+bookingRouter.route('/').get(bookingController.getAllBookings).post(bookingController.createBooking);
+bookingRouter.route('/:id').get(bookingController.getBookig).patch(bookingController.updateBooking).delete(bookingController.deleteBooking)
 
 module.exports = bookingRouter;
